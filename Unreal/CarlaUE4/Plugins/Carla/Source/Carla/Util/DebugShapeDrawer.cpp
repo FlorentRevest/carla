@@ -14,6 +14,15 @@
 #include <carla/rpc/String.h>
 #include <compiler/enable-ue4-macros.h>
 
+struct Debugger {
+  size_t count = 0u;
+  ~Debugger() {
+    UE_LOG(LogCarla, Error, TEXT("Debugger: count = %d"), count);
+  }
+};
+
+static Debugger MY_DEBUGGER;
+
 struct FShapeVisitor
 {
   using Shape = carla::rpc::DebugShape;
@@ -34,6 +43,7 @@ struct FShapeVisitor
         bPersistentLines,
         LifeTime,
         DepthPriority);
+    ++MY_DEBUGGER.count;
   }
 
   void operator()(const Shape::Line &Line) const

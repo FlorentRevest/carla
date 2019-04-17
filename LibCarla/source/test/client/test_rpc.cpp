@@ -19,10 +19,9 @@ using namespace carla::rpc;
 
 TEST(rpc, compilation_tests) {
   Server server(TESTING_PORT);
-  server.BindSync("bind00", []() { return 2.0f; });
-  server.BindSync("bind01", [](int x) { return x; });
-  server.BindSync("bind02", [](int, float) { return 0.0; });
-  server.BindSync("bind03", [](int, float, double, char) {});
+  server.BindSync("bind00", []() -> Response<float> { return 2.0f; });
+  server.BindSync("bind01", [](int x) -> Response<int> { return x; });
+  server.BindSync("bind02", [](int, float) -> Response<double> { return 0.0; });
 }
 
 TEST(rpc, server_bind_sync_run_on_game_thread) {
@@ -32,7 +31,7 @@ TEST(rpc, server_bind_sync_run_on_game_thread) {
 
   Server server(port);
 
-  server.BindSync("do_the_thing", [=](int x, int y) -> int {
+  server.BindSync("do_the_thing", [=](int x, int y) -> Response<int> {
     EXPECT_EQ(std::this_thread::get_id(), main_thread_id);
     return x + y;
   });
